@@ -2,12 +2,26 @@
   "": {
     "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/master.swiftdeps"
   },
+  "/Users/I818292/Documents/Funs/CueDot/Tests/AppConfigurationTests.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests.dia"
+  },
   "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift": {
     "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.d",
     "object": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.swift.o",
     "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests~partial.swiftmodule",
     "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.swiftdeps",
     "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.dia"
+  },
+  "/Users/I818292/Documents/Funs/CueDot/Tests/ConfigurationErrorTests.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests.dia"
   },
   "/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift": {
     "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.d",

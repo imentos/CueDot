@@ -28,6 +28,14 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/AppConfiguration.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/ConfigurationError.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift"
         },
         {
@@ -47,6 +55,8 @@
       "moduleName" : "CueDot",
       "moduleOutputPath" : "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDot.swiftmodule",
       "objects" : [
+        "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/AppConfiguration.swift.o",
+        "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/ConfigurationError.swift.o",
         "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult.swift.o",
         "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/TrackingState.swift.o"
       ],
@@ -120,6 +130,8 @@
       ],
       "prepareForIndexing" : true,
       "sources" : [
+        "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/AppConfiguration.swift",
+        "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/ConfigurationError.swift",
         "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift",
         "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/TrackingState.swift"
       ],
@@ -236,7 +248,15 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/AppConfigurationTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/ConfigurationErrorTests.swift"
         },
         {
           "kind" : "file",
@@ -259,7 +279,9 @@
       "moduleName" : "CueDotTests",
       "moduleOutputPath" : "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotTests.swiftmodule",
       "objects" : [
+        "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/AppConfigurationTests.swift.o",
         "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.swift.o",
+        "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/ConfigurationErrorTests.swift.o",
         "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.swift.o"
       ],
       "otherArguments" : [
@@ -331,7 +353,9 @@
       ],
       "prepareForIndexing" : true,
       "sources" : [
+        "/Users/I818292/Documents/Funs/CueDot/Tests/AppConfigurationTests.swift",
         "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift",
+        "/Users/I818292/Documents/Funs/CueDot/Tests/ConfigurationErrorTests.swift",
         "/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift"
       ],
       "tempsPath" : "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build",
@@ -349,6 +373,8 @@
       "-package-name",
       "cuedot",
       "-c",
+      "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/AppConfiguration.swift",
+      "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/ConfigurationError.swift",
       "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift",
       "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/TrackingState.swift",
       "-I",
@@ -494,7 +520,9 @@
       "-package-name",
       "cuedot",
       "-c",
+      "/Users/I818292/Documents/Funs/CueDot/Tests/AppConfigurationTests.swift",
       "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift",
+      "/Users/I818292/Documents/Funs/CueDot/Tests/ConfigurationErrorTests.swift",
       "/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift",
       "-I",
       "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules",
@@ -593,6 +621,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/AppConfiguration.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Core/ConfigurationError.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift"
         },
         {
@@ -625,7 +661,15 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/AppConfigurationTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/I818292/Documents/Funs/CueDot/Tests/ConfigurationErrorTests.swift"
         },
         {
           "kind" : "file",
