@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/master.swiftdeps"
+  },
+  "/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/BallDetectionResultTests.dia"
+  },
+  "/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/TrackingStateTests.dia"
+  }
+}

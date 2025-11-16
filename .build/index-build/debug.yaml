@@ -1,0 +1,88 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "CueDot-arm64-apple-macosx15.0-debug.module": ["<CueDot-arm64-apple-macosx15.0-debug.module>"]
+  "CueDotPackageTests-arm64-apple-macosx15.0-debug.module": ["<CueDotPackageTests-arm64-apple-macosx15.0-debug.module>"]
+  "CueDotTests-arm64-apple-macosx15.0-debug.module": ["<CueDotTests-arm64-apple-macosx15.0-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<CueDot-arm64-apple-macosx15.0-debug.module>"]
+  "test": ["<CueDot-arm64-apple-macosx15.0-debug.module>","<CueDotTests-arm64-apple-macosx15.0-debug.module>"]
+default: "main"
+nodes:
+  "/Users/I818292/Documents/Funs/CueDot/CueDot/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/I818292/Documents/Funs/CueDot/Tests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift","/Users/I818292/Documents/Funs/CueDot/CueDot/Models/TrackingState.swift"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/sources"]
+    description: "Write auxiliary file /Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/sources"
+
+  "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.derived/runner.swift"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/sources"]
+    description: "Write auxiliary file /Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/sources"
+
+  "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift","/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/sources"]
+    description: "Write auxiliary file /Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/sources"
+
+  "/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<CueDot-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDot.swiftmodule"]
+    outputs: ["<CueDot-arm64-apple-macosx15.0-debug.module>"]
+
+  "<CueDotPackageTests-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotPackageTests.swiftmodule"]
+    outputs: ["<CueDotPackageTests-arm64-apple-macosx15.0-debug.module>"]
+
+  "<CueDotTests-arm64-apple-macosx15.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotTests.swiftmodule"]
+    outputs: ["<CueDotTests-arm64-apple-macosx15.0-debug.module>"]
+
+  "C.CueDot-arm64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift","/Users/I818292/Documents/Funs/CueDot/CueDot/Models/TrackingState.swift","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/sources"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDot.swiftmodule"]
+    description: "Compiling Swift Module 'CueDot' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","CueDot","-emit-dependencies","-emit-module","-emit-module-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDot.swiftmodule","-output-file-map","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/output-file-map.json","-parse-as-library","-incremental","@/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/sources","-I","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx10.13","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j12","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDot.build/include/CueDot-Swift.h","-swift-version","5","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","cuedot"]
+
+  "C.CueDotPackageTests-arm64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.derived/runner.swift","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotTests.swiftmodule","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/sources"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotPackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'CueDotPackageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","CueDotPackageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotPackageTests.swiftmodule","-output-file-map","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/sources","-I","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx10.13","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j12","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotPackageTests.build/include/CueDotPackageTests-Swift.h","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","cuedot"]
+
+  "C.CueDotTests-arm64-apple-macosx15.0-debug.module":
+    tool: shell
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/Tests/BallDetectionResultTests.swift","/Users/I818292/Documents/Funs/CueDot/Tests/TrackingStateTests.swift","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDot.swiftmodule","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/sources"]
+    outputs: ["/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotTests.swiftmodule"]
+    description: "Compiling Swift Module 'CueDotTests' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","CueDotTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules/CueDotTests.swiftmodule","-output-file-map","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/CueDotTests.build/sources","-I","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j12","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/I818292/Documents/Funs/CueDot/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","5","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","cuedot"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/I818292/Documents/Funs/CueDot/CueDot/","/Users/I818292/Documents/Funs/CueDot/Tests/","/Users/I818292/Documents/Funs/CueDot/Package.swift","/Users/I818292/Documents/Funs/CueDot/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

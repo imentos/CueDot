@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/master.swiftdeps"
+  },
+  "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/BallDetectionResult.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/BallDetectionResult.dia"
+  },
+  "/Users/I818292/Documents/Funs/CueDot/CueDot/Models/TrackingState.swift": {
+    "dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/TrackingState.d",
+    "object": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/TrackingState.swift.o",
+    "swiftmodule": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/TrackingState~partial.swiftmodule",
+    "swift-dependencies": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/TrackingState.swiftdeps",
+    "diagnostics": "/Users/I818292/Documents/Funs/CueDot/.build/arm64-apple-macosx/debug/CueDot.build/TrackingState.dia"
+  }
+}
