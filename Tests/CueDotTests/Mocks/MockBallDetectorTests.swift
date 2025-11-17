@@ -68,9 +68,9 @@ final class MockBallDetectorTests: XCTestCase {
         let results = try detector.detect(in: mockFrame, timestamp: CACurrentMediaTime())
         
         XCTAssertEqual(results.count, 1)
-        XCTAssertEqual(results[0].color, .white)
-        XCTAssertEqual(results[0].ballNumber, 0)
         XCTAssertGreaterThan(results[0].confidence, 0.9)
+        XCTAssertFalse(results[0].isOccluded)
+        XCTAssertFalse(results[0].hasMultipleBalls)
     }
     
     func testEmptyDetection() throws {

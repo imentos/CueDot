@@ -13,6 +13,10 @@ let package = Package(
             name: "CueDot",
             targets: ["CueDot"]
         ),
+        .executable(
+            name: "CueDotApp",
+            targets: ["CueDotApp"]
+        ),
     ],
     dependencies: [
         // Add dependencies here as needed
@@ -22,6 +26,11 @@ let package = Package(
             name: "CueDot",
             dependencies: [],
             path: "CueDot"
+        ),
+        .executableTarget(
+            name: "CueDotApp",
+            dependencies: ["CueDot"],
+            path: "CueDotApp"
         ),
         .testTarget(
             name: "CueDotTests",

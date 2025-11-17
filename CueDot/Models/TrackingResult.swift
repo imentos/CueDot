@@ -52,7 +52,7 @@ public struct TrackingResult {
 }
 
 /// State of individual ball tracking
-public enum BallTrackState {
+public enum BallTrackState: Equatable {
     /// Track is actively being updated with detections
     case active
     

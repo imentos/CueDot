@@ -32,7 +32,21 @@ public struct PlatformColor {
 }
 #endif
 
+// Color scheme for theming
+public struct PlatformColorScheme {
+    public let primary: PlatformColor
+    public let secondary: PlatformColor
+    public let accent: PlatformColor
+    
+    public init(primary: PlatformColor, secondary: PlatformColor, accent: PlatformColor) {
+        self.primary = primary
+        self.secondary = secondary
+        self.accent = accent
+    }
+}
+
 #if canImport(RealityKit) && canImport(ARKit)
+@available(iOS 13.0, macOS 10.15, *)
 public typealias PlatformARView = ARView
 #else
 // Fallback ARView for non-AR platforms
@@ -43,7 +57,7 @@ public class PlatformARView {
 
 /// Protocol defining the interface for AR rendering systems
 /// Implementations should handle visual overlays, trajectory visualization, and UI guidance
-@available(iOS 13.0, *)
+@available(iOS 13.0, macOS 10.15, *)
 public protocol ARRendererProtocol {
     
     // MARK: - Configuration
@@ -69,68 +83,64 @@ public protocol ARRendererProtocol {
     
     /// Render trajectory predictions
     /// - Parameters:
-    ///   - trajectories: Ball trajectories to visualize
-    ///   - arView: ARView to render into
+    ///   - trajectories: Dictionary of ball UUIDs to trajectory point arrays
+    ///   - arView: PlatformARView to render into
     ///   - showProbability: Whether to show uncertainty bounds
     /// - Throws: ARRendererError if rendering fails
-    func renderTrajectories(_ trajectories: [UUID: [TrajectoryPoint]], 
-                           in arView: ARView,
-                           showProbability: Bool) throws
-    
-    /// Render cue alignment guidance
+    func renderTrajectories(_ trajectories: [UUID: [TrajectoryPoint]],
+                           in arView: PlatformARView,
+                           showProbability: Bool) throws    /// Render cue alignment guidance
     /// - Parameters:
     ///   - cuePosition: Current cue position and orientation
     ///   - targetBall: Target ball information
     ///   - pocketTarget: Target pocket for the shot
-    ///   - arView: ARView to render into
+    ///   - arView: PlatformARView to render into
     /// - Throws: ARRendererError if rendering fails
     func renderCueGuidance(cuePosition: CuePosition,
                           targetBall: TrackedBall,
                           pocketTarget: PocketPosition,
-                          in arView: ARView) throws
+                          in arView: PlatformARView) throws
     
     /// Render table surface detection and boundaries
     /// - Parameters:
     ///   - tableGeometry: Detected table surface information
-    ///   - arView: ARView to render into
+    ///   - arView: PlatformARView to render into
     /// - Throws: ARRendererError if rendering fails
-    func renderTable(_ tableGeometry: TableGeometry, in arView: ARView) throws
+    func renderTable(_ tableGeometry: TableGeometry, in arView: PlatformARView) throws
     
     /// Render shot analysis overlays
     /// - Parameters:
-    ///   - analysis: Shot analysis data to visualize
-    ///   - arView: ARView to render into
+    ///   - analysis: Shot analysis results including accuracy and recommendations
+    ///   - arView: PlatformARView to render into
     /// - Throws: ARRendererError if rendering fails
-    func renderShotAnalysis(_ analysis: ShotAnalysis, in arView: ARView) throws
+    func renderShotAnalysis(_ analysis: ShotAnalysis, in arView: PlatformARView) throws
     
     // MARK: - UI Elements
     
     /// Update HUD elements (scores, timers, etc.)
     /// - Parameters:
-    ///   - elements: HUD elements to display
-    ///   - arView: ARView containing the HUD
+    ///   - elements: Array of HUD elements to display
+    ///   - arView: PlatformARView containing the HUD
     /// - Throws: ARRendererError if HUD update fails
-    func updateHUD(_ elements: [HUDElement], in arView: ARView) throws
+    func updateHUD(_ elements: [HUDElement], in arView: PlatformARView) throws
     
     /// Show temporary notification or alert
     /// - Parameters:
-    ///   - notification: Notification to display
+    ///   - notification: Notification content and style
     ///   - duration: How long to show (seconds)
-    ///   - arView: ARView to display in
-    func showNotification(_ notification: ARNotification, duration: TimeInterval, in arView: ARView)
+    ///   - arView: PlatformARView to display in
+    func showNotification(_ notification: ARNotification, duration: TimeInterval, in arView: PlatformARView)
     
     /// Hide all UI elements
-    /// - Parameter arView: ARView to clear
-    func hideAllUI(in arView: ARView)
+    /// - Parameter arView: PlatformARView to clear
+    func hideAllUI(in arView: PlatformARView)
     
     // MARK: - Lifecycle Management
     
-    /// Initialize the renderer with AR session
-    /// - Parameter arView: ARView to render into
+    /// Initialize renderer with ARView
+    /// - Parameter arView: PlatformARView to render into
     /// - Throws: ARRendererError if initialization fails
-    func initialize(with arView: ARView) throws
-    
-    /// Cleanup renderer resources
+    func initialize(with arView: PlatformARView) throws    /// Cleanup renderer resources
     func cleanup()
     
     /// Pause rendering (but keep state)
@@ -294,7 +304,15 @@ public struct TrajectoryVisualSettings {
     
     public init(enabled: Bool = true,
                 lineThickness: Float = 3.0,
-                trajectoryColor: PlatformPlatformColor.blue,
+                trajectoryColor: PlatformColor = {
+                    #if canImport(UIKit)
+                    return UIColor.systemBlue
+                    #elseif canImport(AppKit)
+                    return NSColor.systemBlue
+                    #else
+                    return PlatformColor.blue
+                    #endif
+                }(),
                 showUncertainty: Bool = true,
                 uncertaintyStyle: UncertaintyStyle = .cone,
                 maxTrajectoryLength: TimeInterval = 2.0,
@@ -346,7 +364,15 @@ public struct CueGuidanceSettings {
     public let autoHide: Bool
     
     public init(enabled: Bool = true,
-                guidelineColor: PlatformPlatformColor.yellow,
+                guidelineColor: PlatformColor = {
+                    #if canImport(UIKit)
+                    return UIColor.systemYellow
+                    #elseif canImport(AppKit)
+                    return NSColor.systemYellow
+                    #else
+                    return PlatformColor.yellow
+                    #endif
+                }(),
                 showAimAssist: Bool = true,
                 aimAssistOpacity: Float = 0.5,
                 showPowerIndicator: Bool = true,
@@ -388,7 +414,15 @@ public struct TableVisualSettings {
     public let surfaceOpacity: Float
     
     public init(showTableOutline: Bool = true,
-                outlineColor: PlatformPlatformColor.green,
+                outlineColor: PlatformColor = {
+                    #if canImport(UIKit)
+                    return UIColor.systemGreen
+                    #elseif canImport(AppKit)
+                    return NSColor.systemGreen
+                    #else
+                    return PlatformColor.green
+                    #endif
+                }(),
                 showPockets: Bool = true,
                 pocketStyle: PocketStyle = .realistic,
                 showGrid: Bool = false,

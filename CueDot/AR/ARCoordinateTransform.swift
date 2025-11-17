@@ -18,7 +18,7 @@ public class ARCoordinateTransform {
     private(set) var cameraTransform: simd_float4x4
     
     /// Current projection matrix for camera
-    private(set) var projectionMatrix: simd_float3x3
+    private(set) var projectionMatrix: simd_float4x4
     
     /// Viewport dimensions in pixels
     private(set) var viewportSize: CGSize
@@ -31,7 +31,7 @@ public class ARCoordinateTransform {
     /// Initialize coordinate transform with default identity matrices
     public init() {
         self.cameraTransform = matrix_identity_float4x4
-        self.projectionMatrix = matrix_identity_float3x3
+        self.projectionMatrix = matrix_identity_float4x4
         self.viewportSize = CGSize(width: 1920, height: 1080) // Default iPhone camera resolution
         self.intrinsics = matrix_identity_float3x3
     }
@@ -54,13 +54,13 @@ public class ARCoordinateTransform {
     
     /// Manually update transformation matrices (for testing)
     /// - Parameters:
-    ///   - cameraTransform: Camera to world transform matrix
-    ///   - projectionMatrix: Camera projection matrix
-    ///   - viewportSize: Screen viewport dimensions
+    ///   - cameraTransform: Camera transform matrix
+    ///   - projectionMatrix: Projection matrix
+    ///   - viewportSize: Viewport dimensions
     ///   - intrinsics: Camera intrinsic parameters
     public func updateMatrices(
         cameraTransform: simd_float4x4,
-        projectionMatrix: simd_float3x3,
+        projectionMatrix: simd_float4x4,
         viewportSize: CGSize,
         intrinsics: simd_float3x3
     ) {

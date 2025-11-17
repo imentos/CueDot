@@ -12,7 +12,7 @@ import UIKit
 
 /// Core AR overlay renderer implementation
 /// Provides basic overlay rendering for ball tracking and coordinate system integration
-@available(iOS 13.0, *)
+@available(iOS 13.0, macOS 10.15, *)
 public class AROverlayRenderer: ARRendererProtocol {
     
     // MARK: - Properties
@@ -60,7 +60,7 @@ public class AROverlayRenderer: ARRendererProtocol {
         // Update coordinate transform with current camera
         coordinateTransform.updateMatrices(
             cameraTransform: cameraTransform,
-            projectionMatrix: matrix_identity_float3x3, // Will be properly set when ARFrame is available
+            projectionMatrix: matrix_identity_float4x4, // Will be properly set when ARFrame is available
             viewportSize: CGSize(width: 1920, height: 1080), // Default size
             intrinsics: matrix_identity_float3x3
         )

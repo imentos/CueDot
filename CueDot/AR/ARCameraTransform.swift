@@ -18,7 +18,7 @@ public class ARCameraTransform {
     public private(set) var cameraTransform: simd_float4x4
     
     /// Camera projection matrix for current frame
-    public private(set) var projectionMatrix: simd_float3x3
+    public private(set) var projectionMatrix: simd_float4x4
     
     /// Camera intrinsic parameters
     public private(set) var intrinsics: simd_float3x3
@@ -47,7 +47,7 @@ public class ARCameraTransform {
     /// Initialize with default camera parameters
     public init() {
         self.cameraTransform = matrix_identity_float4x4
-        self.projectionMatrix = matrix_identity_float3x3
+        self.projectionMatrix = matrix_identity_float4x4
         self.intrinsics = matrix_identity_float3x3
         self.viewportSize = CGSize(width: 1920, height: 1080)
         self.trackingState = .notAvailable
@@ -72,8 +72,8 @@ public class ARCameraTransform {
         self.projectionMatrix = frame.camera.projectionMatrix(
             for: orientation,
             viewportSize: viewportSize,
-            zNear: nearClip,
-            zFar: farClip
+            zNear: CGFloat(nearClip),
+            zFar: CGFloat(farClip)
         )
         
         // Update tracking state
@@ -137,7 +137,7 @@ public class ARCameraTransform {
         transform: simd_float4x4,
         intrinsics: simd_float3x3,
         viewportSize: CGSize,
-        projectionMatrix: simd_float3x3
+        projectionMatrix: simd_float4x4
     ) {
         self.cameraTransform = transform
         self.intrinsics = intrinsics
@@ -417,13 +417,7 @@ extension ARCameraTransform {
     /// Create projection matrix for rendering
     /// - Returns: 4x4 projection matrix
     public func getProjectionMatrix4x4() -> simd_float4x4 {
-        // Convert 3x3 projection matrix to 4x4
-        let proj3x3 = projectionMatrix
-        return simd_float4x4(
-            simd_float4(proj3x3.columns.0.x, proj3x3.columns.0.y, proj3x3.columns.0.z, 0),
-            simd_float4(proj3x3.columns.1.x, proj3x3.columns.1.y, proj3x3.columns.1.z, 0),
-            simd_float4(proj3x3.columns.2.x, proj3x3.columns.2.y, proj3x3.columns.2.z, 0),
-            simd_float4(0, 0, 0, 1)
-        )
+        // The projection matrix is already 4x4
+        return projectionMatrix
     }
 }

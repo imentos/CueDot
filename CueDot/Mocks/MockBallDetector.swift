@@ -150,6 +150,13 @@ public class MockBallDetector: BallDetectionProtocol {
     #endif
     */
     
+    /// Convenience method for testing - uses identity transform as default
+    public func detect(in pixelBuffer: CVPixelBuffer, timestamp: TimeInterval) throws -> [BallDetectionResult] {
+        return try detectBalls(in: pixelBuffer, 
+                              cameraTransform: matrix_identity_float4x4,
+                              timestamp: timestamp)
+    }
+    
     public func startDetection() throws {
         if !isActive {
             isActive = true
