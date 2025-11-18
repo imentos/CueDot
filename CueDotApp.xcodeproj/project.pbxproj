@@ -3,30 +3,59 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1A000001 /* CueDotAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000 /* CueDotAppApp.swift */; };
 		1A000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000002 /* ContentView.swift */; };
 		1A000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A000004 /* Assets.xcassets */; };
-		1A000008 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A000007 /* Preview Assets.xcassets */; };
 		1A00000A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000009 /* ARViewController.swift */; };
 		1A00000C /* BallDetectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000B /* BallDetectionManager.swift */; };
+		B30D25362ECCE19F00F63E3C /* CueDot in Frameworks */ = {isa = PBXBuildFile; productRef = B30D25352ECCE19F00F63E3C /* CueDot */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1A000000 /* CueDotAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueDotAppApp.swift; sourceTree = "<group>"; };
 		1A000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1A000004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A14B20EA2C5F123456789ABC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		A14B20F12C5F123456789ABC /* CueDotAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueDotAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A14B20FB2C5F123456789DEF /* BallDetectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallDetectionManager.swift; sourceTree = "<group>"; };
-		A14B20FC2C5F123456789EFG /* CueDotApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CueDotApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		1A000009 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		1A00000B /* BallDetectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallDetectionManager.swift; sourceTree = "<group>"; };
 		1A00000D /* CueDotApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueDotApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A00000E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A14B20FC2C5F123456789EFG /* CueDotApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CueDotApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		B33B8E612ECCDC0800BEB576 /* ARBallDetectionIntegrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARBallDetectionIntegrator.swift; sourceTree = "<group>"; };
+		B33B8E622ECCDC0800BEB576 /* ARCameraTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraTransform.swift; sourceTree = "<group>"; };
+		B33B8E632ECCDC0800BEB576 /* ARCoordinateTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoordinateTransform.swift; sourceTree = "<group>"; };
+		B33B8E642ECCDC0800BEB576 /* AROverlayRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AROverlayRenderer.swift; sourceTree = "<group>"; };
+		B33B8E662ECCDC0800BEB576 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		B33B8E672ECCDC0800BEB576 /* ConfigurationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationError.swift; sourceTree = "<group>"; };
+		B33B8E692ECCDC0800BEB576 /* AdaptiveDetectionParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveDetectionParameters.swift; sourceTree = "<group>"; };
+		B33B8E6A2ECCDC0800BEB576 /* BallAssociationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallAssociationEngine.swift; sourceTree = "<group>"; };
+		B33B8E6B2ECCDC0800BEB576 /* BallColorAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallColorAnalyzer.swift; sourceTree = "<group>"; };
+		B33B8E6C2ECCDC0800BEB576 /* BallTypeClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallTypeClassifier.swift; sourceTree = "<group>"; };
+		B33B8E6D2ECCDC0800BEB576 /* DetectionConfidenceCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionConfidenceCalculator.swift; sourceTree = "<group>"; };
+		B33B8E6E2ECCDC0800BEB576 /* EnhancedVisionBallDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedVisionBallDetector.swift; sourceTree = "<group>"; };
+		B33B8E6F2ECCDC0800BEB576 /* EnhancedVisionBallDetector.swift.bak */ = {isa = PBXFileReference; lastKnownFileType = text; path = EnhancedVisionBallDetector.swift.bak; sourceTree = "<group>"; };
+		B33B8E702ECCDC0800BEB576 /* MultiBallClusteringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBallClusteringEngine.swift; sourceTree = "<group>"; };
+		B33B8E712ECCDC0800BEB576 /* TemporalFilterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporalFilterManager.swift; sourceTree = "<group>"; };
+		B33B8E722ECCDC0800BEB576 /* VisionBallDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBallDetector.swift; sourceTree = "<group>"; };
+		B33B8E742ECCDC0800BEB576 /* MockBallDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBallDetector.swift; sourceTree = "<group>"; };
+		B33B8E762ECCDC0800BEB576 /* BallDetectionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallDetectionResult.swift; sourceTree = "<group>"; };
+		B33B8E772ECCDC0800BEB576 /* EnhancedBallDetectionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedBallDetectionResult.swift; sourceTree = "<group>"; };
+		B33B8E782ECCDC0800BEB576 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
+		B33B8E792ECCDC0800BEB576 /* TrackingResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingResult.swift; sourceTree = "<group>"; };
+		B33B8E7A2ECCDC0800BEB576 /* TrackingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingState.swift; sourceTree = "<group>"; };
+		B33B8E7C2ECCDC0800BEB576 /* ARRendererProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARRendererProtocol.swift; sourceTree = "<group>"; };
+		B33B8E7D2ECCDC0800BEB576 /* BallDetectionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallDetectionProtocol.swift; sourceTree = "<group>"; };
+		B33B8E7E2ECCDC0800BEB576 /* BallTrackingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallTrackingProtocol.swift; sourceTree = "<group>"; };
+		B33B8E7F2ECCDC0800BEB576 /* ProtocolOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolOverview.swift; sourceTree = "<group>"; };
+		B33B8E812ECCDC0800BEB576 /* ARFrameProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARFrameProvider.swift; sourceTree = "<group>"; };
+		B33B8E822ECCDC0800BEB576 /* MockARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockARView.swift; sourceTree = "<group>"; };
+		B33B8E832ECCDC0800BEB576 /* PerformanceProfiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceProfiler.swift; sourceTree = "<group>"; };
+		B33B8E852ECCDC0800BEB576 /* MultiBallTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBallTracker.swift; sourceTree = "<group>"; };
+		B33B8E862ECCDC0800BEB576 /* SimpleKalmanFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleKalmanFilter.swift; sourceTree = "<group>"; };
+		B33B8E8B2ECCDC4F00BEB576 /* CueDot */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CueDot; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A00000F /* CueDot in Frameworks */,
+				B30D25362ECCE19F00F63E3C /* CueDot in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,7 +73,6 @@
 		1A000006 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				1A000007 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -53,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				1A000012 /* CueDotApp */,
+				B33B8E602ECCDC0800BEB576 /* Frameworks */,
 				1A000013 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -78,6 +107,133 @@
 				1A00000D /* CueDotApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B33B8E602ECCDC0800BEB576 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E8B2ECCDC4F00BEB576 /* CueDot */,
+				B33B8E8A2ECCDC0800BEB576 /* CueDot */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B33B8E652ECCDC0800BEB576 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E612ECCDC0800BEB576 /* ARBallDetectionIntegrator.swift */,
+				B33B8E622ECCDC0800BEB576 /* ARCameraTransform.swift */,
+				B33B8E632ECCDC0800BEB576 /* ARCoordinateTransform.swift */,
+				B33B8E642ECCDC0800BEB576 /* AROverlayRenderer.swift */,
+			);
+			path = AR;
+			sourceTree = "<group>";
+		};
+		B33B8E682ECCDC0800BEB576 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E662ECCDC0800BEB576 /* AppConfiguration.swift */,
+				B33B8E672ECCDC0800BEB576 /* ConfigurationError.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		B33B8E732ECCDC0800BEB576 /* Detection */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E692ECCDC0800BEB576 /* AdaptiveDetectionParameters.swift */,
+				B33B8E6A2ECCDC0800BEB576 /* BallAssociationEngine.swift */,
+				B33B8E6B2ECCDC0800BEB576 /* BallColorAnalyzer.swift */,
+				B33B8E6C2ECCDC0800BEB576 /* BallTypeClassifier.swift */,
+				B33B8E6D2ECCDC0800BEB576 /* DetectionConfidenceCalculator.swift */,
+				B33B8E6E2ECCDC0800BEB576 /* EnhancedVisionBallDetector.swift */,
+				B33B8E6F2ECCDC0800BEB576 /* EnhancedVisionBallDetector.swift.bak */,
+				B33B8E702ECCDC0800BEB576 /* MultiBallClusteringEngine.swift */,
+				B33B8E712ECCDC0800BEB576 /* TemporalFilterManager.swift */,
+				B33B8E722ECCDC0800BEB576 /* VisionBallDetector.swift */,
+			);
+			path = Detection;
+			sourceTree = "<group>";
+		};
+		B33B8E752ECCDC0800BEB576 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E742ECCDC0800BEB576 /* MockBallDetector.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		B33B8E7B2ECCDC0800BEB576 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E762ECCDC0800BEB576 /* BallDetectionResult.swift */,
+				B33B8E772ECCDC0800BEB576 /* EnhancedBallDetectionResult.swift */,
+				B33B8E782ECCDC0800BEB576 /* Statistics.swift */,
+				B33B8E792ECCDC0800BEB576 /* TrackingResult.swift */,
+				B33B8E7A2ECCDC0800BEB576 /* TrackingState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B33B8E802ECCDC0800BEB576 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E7C2ECCDC0800BEB576 /* ARRendererProtocol.swift */,
+				B33B8E7D2ECCDC0800BEB576 /* BallDetectionProtocol.swift */,
+				B33B8E7E2ECCDC0800BEB576 /* BallTrackingProtocol.swift */,
+				B33B8E7F2ECCDC0800BEB576 /* ProtocolOverview.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		B33B8E842ECCDC0800BEB576 /* TestInfrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E812ECCDC0800BEB576 /* ARFrameProvider.swift */,
+				B33B8E822ECCDC0800BEB576 /* MockARView.swift */,
+				B33B8E832ECCDC0800BEB576 /* PerformanceProfiler.swift */,
+			);
+			path = TestInfrastructure;
+			sourceTree = "<group>";
+		};
+		B33B8E872ECCDC0800BEB576 /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E852ECCDC0800BEB576 /* MultiBallTracker.swift */,
+				B33B8E862ECCDC0800BEB576 /* SimpleKalmanFilter.swift */,
+			);
+			path = Tracking;
+			sourceTree = "<group>";
+		};
+		B33B8E882ECCDC0800BEB576 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		B33B8E892ECCDC0800BEB576 /* Vision */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Vision;
+			sourceTree = "<group>";
+		};
+		B33B8E8A2ECCDC0800BEB576 /* CueDot */ = {
+			isa = PBXGroup;
+			children = (
+				B33B8E652ECCDC0800BEB576 /* AR */,
+				B33B8E682ECCDC0800BEB576 /* Core */,
+				B33B8E732ECCDC0800BEB576 /* Detection */,
+				B33B8E752ECCDC0800BEB576 /* Mocks */,
+				B33B8E7B2ECCDC0800BEB576 /* Models */,
+				B33B8E802ECCDC0800BEB576 /* Protocols */,
+				B33B8E842ECCDC0800BEB576 /* TestInfrastructure */,
+				B33B8E872ECCDC0800BEB576 /* Tracking */,
+				B33B8E882ECCDC0800BEB576 /* UI */,
+				B33B8E892ECCDC0800BEB576 /* Vision */,
+			);
+			path = CueDot;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,6 +280,9 @@
 				Base,
 			);
 			mainGroup = 1A000011;
+			packageReferences = (
+				B30D25342ECCE19F00F63E3C /* XCLocalSwiftPackageReference "../CueDot" */,
+			);
 			productRefGroup = 1A000013 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,7 +297,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A000008 /* Preview Assets.xcassets in Resources */,
 				1A000005 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -363,6 +521,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30D25342ECCE19F00F63E3C /* XCLocalSwiftPackageReference "../CueDot" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CueDot;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30D25352ECCE19F00F63E3C /* CueDot */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CueDot;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A000018 /* Project object */;
 }

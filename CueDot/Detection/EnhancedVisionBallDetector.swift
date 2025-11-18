@@ -16,13 +16,13 @@ public enum DetectionSource {
 
 /// Enhanced Vision-based ball detection implementation
 /// Uses advanced computer vision algorithms for improved accuracy and reliability
-@available(iOS 17.0, *)
+@available(iOS 14.0, *)
 public class EnhancedVisionBallDetector: BallDetectionProtocol {
     
     // MARK: - Nested Types
     
     /// Candidate detection from vision analysis
-    @available(iOS 17.0, *)
+    @available(iOS 14.0, macOS 11.0, *)
     public struct CandidateDetection {
         let id: UUID
         let boundingBox: CGRect
@@ -89,6 +89,12 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     /// Detection history for temporal filtering
     private var detectionHistory: DetectionHistory
     
+    /// Multi-ball clustering engine for complex scenes
+    private let clusteringEngine: MultiBallClusteringEngine
+    
+    /// Ball association engine for tracking across frames
+    private let associationEngine: BallAssociationEngine
+    
     // MARK: - Private Properties
     
     private var visionRequests: [VNRequest] = []
@@ -106,6 +112,8 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         self.profiler = DetectionProfiler()
         self.visionRequestCache = VisionRequestCache()
         self.detectionHistory = DetectionHistory()
+        self.clusteringEngine = MultiBallClusteringEngine()
+        self.associationEngine = BallAssociationEngine()
         setupDetection()
     }
     
@@ -114,6 +122,38 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     public func detectBalls(in pixelBuffer: CVPixelBuffer, 
                            cameraTransform: simd_float4x4,
                            timestamp: TimeInterval) throws -> [BallDetectionResult] {
+        guard isActive else {
+            throw BallDetectionError.detectionNotActive
+        }
+        
+        // Use a synchronous wrapper around the async implementation
+        let semaphore = DispatchSemaphore(value: 0)
+        var result: [BallDetectionResult] = []
+        var detectionError: Error?
+        
+        Task {
+            do {
+                result = try await detectBallsAsync(in: pixelBuffer, 
+                                                  cameraTransform: cameraTransform, 
+                                                  timestamp: timestamp)
+            } catch {
+                detectionError = error
+            }
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        
+        if let error = detectionError {
+            throw error
+        }
+        
+        return result
+    }
+    
+    private func detectBallsAsync(in pixelBuffer: CVPixelBuffer, 
+                                 cameraTransform: simd_float4x4,
+                                 timestamp: TimeInterval) async throws -> [BallDetectionResult] {
         guard isActive else {
             throw BallDetectionError.detectionNotActive
         }
@@ -169,6 +209,27 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         detectionResults = applyTemporalFiltering(detectionResults, timestamp: timestamp)
         profiler.endStage(.temporalFiltering)
         
+        // Apply multi-ball clustering for complex scenes
+        profiler.startStage(.clustering)
+        let enhancedDetections = detectionResults.toEnhanced()
+        let clusteringResult = try await clusteringEngine.clusterBalls(enhancedDetections)
+        profiler.endStage(.clustering)
+        
+        // Apply ball association and tracking
+        profiler.startStage(.association)
+        let associationResult = await associationEngine.associateBalls(enhancedDetections)
+        profiler.endStage(.association)
+        
+        // Merge clustering and association results for final detection set
+        let finalEnhancedDetections = mergeClusteringAndAssociation(
+            detections: enhancedDetections,
+            clustering: clusteringResult,
+            association: associationResult
+        )
+        
+        // Convert back to original format for compatibility
+        detectionResults = finalEnhancedDetections.toOriginal()
+        
         // Update detection history
         detectionHistory.add(detections: detectionResults, timestamp: timestamp)
         
@@ -193,16 +254,18 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
                                 timestamp: TimeInterval,
                                 completion: @escaping (Result<[BallDetectionResult], BallDetectionError>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            do {
-                let results = try self?.detectBalls(in: pixelBuffer, 
-                                                   cameraTransform: cameraTransform, 
-                                                   timestamp: timestamp) ?? []
-                DispatchQueue.main.async {
-                    completion(.success(results))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(error as? BallDetectionError ?? .detectionFailed("Unknown error")))
+            Task {
+                do {
+                    let results = try await self?.detectBallsAsync(in: pixelBuffer, 
+                                                       cameraTransform: cameraTransform, 
+                                                       timestamp: timestamp) ?? []
+                    DispatchQueue.main.async {
+                        completion(.success(results))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error as? BallDetectionError ?? .detectionFailed("Unknown error")))
+                    }
                 }
             }
         }
@@ -963,11 +1026,111 @@ public class DetectionProfiler {
     }
 }
 
+    // MARK: - Multi-ball Processing Methods
+    
+    /// Merge clustering and association results with original detections
+    private func mergeClusteringAndAssociation(
+        detections: [EnhancedBallDetectionResult],
+        clustering: MultiBallClusteringEngine.ClusteringResult,
+        association: BallAssociationEngine.AssociationResult
+    ) -> [EnhancedBallDetectionResult] {
+        var mergedResults: [EnhancedBallDetectionResult] = []
+        
+        // Start with original detections and enhance with tracking and clustering info
+        for detection in detections {
+            var enhancedDetection = detection
+            
+            // Find associated tracking info
+            if let trackingAssociation = association.associations.first(where: { 
+                $0.detectionId == detection.id 
+            }) {
+                // Create metadata with tracking information
+                let newMetadata = BallDetectionMetadata(
+                    trackingId: trackingAssociation.trackingId,
+                    clusterInfo: findClusterInfo(for: detection, in: clustering),
+                    associationType: trackingAssociation.associationType.rawValue,
+                    sceneComplexity: clustering.sceneComplexity.rawValue
+                )
+                
+                enhancedDetection = EnhancedBallDetectionResult(
+                    id: detection.id,
+                    ballCenter3D: detection.ballCenter3D,
+                    confidence: detection.confidence,
+                    timestamp: detection.timestamp,
+                    isOccluded: detection.isOccluded,
+                    hasMultipleBalls: detection.hasMultipleBalls,
+                    ballType: detection.ballType,
+                    metadata: newMetadata
+                )
+            }
+            
+            mergedResults.append(enhancedDetection)
+        }
+        
+        return mergedResults
+    }
+    
+    /// Find cluster information for a specific detection
+    private func findClusterInfo(
+        for detection: EnhancedBallDetectionResult,
+        in clustering: MultiBallClusteringEngine.ClusteringResult
+    ) -> ClusterInfo? {
+        for cluster in clustering.clusters {
+            if cluster.balls.contains(where: { $0.id == detection.id }) {
+                return ClusterInfo(
+                    clusterId: cluster.id.uuidString,
+                    clusterType: cluster.clusterType.rawValue,
+                    ballCount: cluster.balls.count,
+                    clusterConfidence: cluster.confidence
+                )
+            }
+        }
+        return nil
+    }
+
+// MARK: - Extensions for Enum String Values
+
+extension MultiBallClusteringEngine.BallCluster.ClusterType {
+    var rawValue: String {
+        switch self {
+        case .loose: return "loose"
+        case .tight: return "tight"
+        case .overlapping: return "overlapping"
+        case .linear: return "linear"
+        case .circular: return "circular"
+        }
+    }
+}
+
+extension MultiBallClusteringEngine.ClusteringResult.SceneComplexity {
+    var rawValue: String {
+        switch self {
+        case .simple: return "simple"
+        case .moderate: return "moderate"
+        case .complex: return "complex"
+        case .chaotic: return "chaotic"
+        }
+    }
+}
+
+extension BallAssociationEngine.AssociationResult.BallAssociation.AssociationType {
+    var rawValue: String {
+        switch self {
+        case .direct: return "direct"
+        case .predicted: return "predicted"
+        case .recovered: return "recovered"
+        case .appearance: return "appearance"
+        }
+    }
+}
+
 /// Profiling stage enumeration
 public enum ProfilingStage: String {
     case visionProcessing = "visionProcessing"
     case resultProcessing = "resultProcessing"
     case temporalFiltering = "temporalFiltering"
+    case clustering = "clustering"
+    case association = "association"
 }
 
 // MARK: - Extensions

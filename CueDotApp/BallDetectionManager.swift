@@ -3,17 +3,16 @@ import ARKit
 import RealityKit
 import SwiftUI
 import Combine
+import CueDot
 
-// Note: This would import your CueDot library when properly linked
-// import CueDot
-
-class BallDetectionManager: ObservableObject {
+class BallDetectionManager: NSObject, ObservableObject {
     @Published var detectedBalls: [DetectedBall] = []
     @Published var isTracking: Bool = false
     @Published var isGuidanceEnabled: Bool = false
     
     private var arView: ARView?
-    // private var ballDetectionIntegrator: ARBallDetectionIntegrator?
+    private var ballDetectionIntegrator: ARBallDetectionIntegrator?
+    private var frameProcessingQueue = DispatchQueue(label: "com.cuedot.frameProcessing", qos: .userInitiated)
     
     struct DetectedBall: Identifiable {
         let id = UUID()
@@ -24,6 +23,9 @@ class BallDetectionManager: ObservableObject {
     
     func setupAR(with arView: ARView) {
         self.arView = arView
+        
+        // Set this manager as the AR session delegate
+        arView.session.delegate = self
         
         // Configure AR session
         let configuration = ARWorldTrackingConfiguration()
@@ -36,27 +38,18 @@ class BallDetectionManager: ObservableObject {
         
         arView.session.run(configuration)
         
-        // Set up ball detection integrator (commented out until CueDot library is properly linked)
-        // setupBallDetection()
+        // Set up ball detection integrator
+        setupBallDetection()
     }
     
     private func setupBallDetection() {
-        guard let arView = arView else { return }
+        // Initialize the ball detection integrator
+        // Detection happens automatically when AR frames are received
+        ballDetectionIntegrator = ARBallDetectionIntegrator()
         
-        // Initialize the ball detection integrator with the existing CueDot library
-        // ballDetectionIntegrator = ARBallDetectionIntegrator()
-        
-        // Configure detection settings
-        // let config = BallDetectionConfiguration()
-        // ballDetectionIntegrator?.configuration = config
-        
-        // Start detection
-        // do {
-        //     try ballDetectionIntegrator?.startDetection()
-        //     isTracking = true
-        // } catch {
-        //     print("Failed to start ball detection: \(error)")
-        // }
+        // Note: ARBallDetectionIntegrator processes frames via detectBallsIn3D(frame:completion:)
+        // This should be called in the ARSessionDelegate's didUpdate frame method
+        isTracking = true
     }
     
     func startSession() {
@@ -76,18 +69,11 @@ class BallDetectionManager: ObservableObject {
         // Clear any previous detections
         detectedBalls.removeAll()
         
-        // Start ball detection if integrator exists (commented out)
-        // if let integrator = ballDetectionIntegrator {
-        //     do {
-        //         try integrator.startDetection()
-        //     } catch {
-        //         print("Failed to restart ball detection: \(error)")
-        //     }
-        // }
+        // Ball detection continues automatically when AR frames are processed
+        isTracking = ballDetectionIntegrator != nil
     }
     
     func stopSession() {
-        // ballDetectionIntegrator?.stopDetection()
         arView?.session.pause()
         isTracking = false
     }
@@ -101,18 +87,11 @@ class BallDetectionManager: ObservableObject {
         arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
         // Reset detection
-        // ballDetectionIntegrator?.reset()
+        ballDetectionIntegrator?.reset()
         detectedBalls.removeAll()
         
-        // Restart detection
-        // do {
-        //     try ballDetectionIntegrator?.startDetection()
-        //     isTracking = true
-        // } catch {
-        //     print("Failed to restart after reset: \(error)")
-        // }
-        
-        // Note: Simulation removed - will show actual detections only
+        // Ball detection will resume automatically when AR frames are processed
+        isTracking = ballDetectionIntegrator != nil
     }
     
     func startCalibration() {
@@ -127,20 +106,75 @@ class BallDetectionManager: ObservableObject {
         // This would enable/disable the AR cue guidance overlay
     }
     
-    // Simulate ball detection for demo purposes (currently disabled)
-    func simulateDetection() {
-        // Commented out to show only real detections
-        /*
-        let sampleBalls = [
-            DetectedBall(position: SIMD3<Float>(0, 0, -1), color: "White", confidence: 0.95),
-            DetectedBall(position: SIMD3<Float>(0.2, 0, -1.2), color: "Red", confidence: 0.87),
-            DetectedBall(position: SIMD3<Float>(-0.1, 0, -0.8), color: "Blue", confidence: 0.92)
-        ]
-        
-        DispatchQueue.main.async {
-            self.detectedBalls = sampleBalls
-            self.isTracking = true
+    // MARK: - Helper Methods
+    
+    private func processBallDetectionResult(_ result: ARBallDetectionResult) {
+        // Convert AR3DBallDetection to our DetectedBall model
+        let balls = result.detections3D.map { detection in
+            DetectedBall(
+                position: detection.worldPosition,
+                color: ballColorToString(detection.colorResult),
+                confidence: detection.confidence
+            )
         }
-        */
+        
+        // Update on main thread
+        DispatchQueue.main.async {
+            self.detectedBalls = balls
+        }
+    }
+    
+    private func ballColorToString(_ colorResult: BallColorResult?) -> String {
+        guard let colorResult = colorResult else {
+            return "Unknown"
+        }
+        
+        // Since internal properties are not accessible, we use a simplified approach
+        // based on confidence and stripe detection
+        if colorResult.hasStripes {
+            return "Striped Ball"
+        } else {
+            return "Solid Ball"
+        }
+    }
+}
+
+// MARK: - ARSessionDelegate
+
+extension BallDetectionManager: ARSessionDelegate {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        // Only process if tracking is enabled and integrator exists
+        guard isTracking, let integrator = ballDetectionIntegrator else { return }
+        
+        // Process frame on background queue to avoid blocking the AR session
+        frameProcessingQueue.async { [weak self] in
+            integrator.detectBallsIn3D(frame: frame) { result in
+                self?.processBallDetectionResult(result)
+            }
+        }
+    }
+    
+    func session(_ session: ARSession, didFailWithError error: Error) {
+        print("AR Session failed: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            self.isTracking = false
+        }
+    }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+        print("AR Session was interrupted")
+        DispatchQueue.main.async {
+            self.isTracking = false
+        }
+    }
+    
+    func sessionInterruptionEnded(_ session: ARSession) {
+        print("AR Session interruption ended")
+        // Restart tracking if integrator is available
+        if ballDetectionIntegrator != nil {
+            DispatchQueue.main.async {
+                self.isTracking = true
+            }
+        }
     }
 }

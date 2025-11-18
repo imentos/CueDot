@@ -183,7 +183,7 @@ public class SimpleKalmanFilter {
         state[2] += gain[2] * innovation[2]
         
         // Update velocity based on innovation (simple approach)
-        if let lastTime = lastTimestamp {
+        if lastTimestamp != nil {
             let dt = Float(0.033) // Assume ~30fps for velocity estimation
             if dt > 0 {
                 state[3] += gain[0] * innovation[0] / dt * 0.1 // Small velocity update
