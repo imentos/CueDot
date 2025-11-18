@@ -10,7 +10,6 @@
 		1A000001 /* CueDotAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000 /* CueDotAppApp.swift */; };
 		1A000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000002 /* ContentView.swift */; };
 		1A000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A000004 /* Assets.xcassets */; };
-		1A00000A /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000009 /* ARViewController.swift */; };
 		1A00000C /* BallDetectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000B /* BallDetectionManager.swift */; };
 		B30D25362ECCE19F00F63E3C /* CueDot in Frameworks */ = {isa = PBXBuildFile; productRef = B30D25352ECCE19F00F63E3C /* CueDot */; };
 /* End PBXBuildFile section */
@@ -19,7 +18,6 @@
 		1A000000 /* CueDotAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueDotAppApp.swift; sourceTree = "<group>"; };
 		1A000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1A000004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1A000009 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		1A00000B /* BallDetectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallDetectionManager.swift; sourceTree = "<group>"; };
 		1A00000D /* CueDotApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueDotApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A00000E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 			children = (
 				1A000000 /* CueDotAppApp.swift */,
 				1A000002 /* ContentView.swift */,
-				1A000009 /* ARViewController.swift */,
 				1A00000B /* BallDetectionManager.swift */,
 				A14B20FC2C5F123456789EFG /* CueDotApp-Bridging-Header.h */,
 				1A000004 /* Assets.xcassets */,
@@ -310,7 +307,6 @@
 			files = (
 				1A000003 /* ContentView.swift in Sources */,
 				1A000001 /* CueDotAppApp.swift in Sources */,
-				1A00000A /* ARViewController.swift in Sources */,
 				1A00000C /* BallDetectionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
