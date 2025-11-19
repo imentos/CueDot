@@ -1,6 +1,6 @@
 # AR Cue Alignment Coach - Development Progress
 
-## Current Status: ✅ Step 9 Complete - Multi-ball Detection & Clustering
+## Current Status: ✅ Phase 6 Visualization & Telemetry Enhancements Complete
 
 ## Phase 1: Foundation
 1. ✅ Project Setup & Core Data Models 
@@ -109,17 +109,32 @@
 - **Platform**: iOS 17+ only targeting for optimal ARKit integration
 - **Architecture**: Protocol-based with dependency injection
 
-### Next Steps
-**Step 10: Confidence Calculation & Validation**
-- [ ] Implement enhanced confidence algorithms with temporal smoothing
-- [ ] Multi-frame validation for detection stability
-- [ ] Adaptive threshold adjustment based on scene conditions and ball clustering
-- [ ] Confidence-based detection filtering with hysteresis
-- [ ] Integration with multi-ball tracking confidence from Step 9 clustering results
-- Implement advanced clustering algorithms for multiple ball detection
-- Add ball grouping and association logic for complex scenes
-- Enhance spatial reasoning for overlapping ball scenarios
-- Implement scene understanding for pool table context
+### Next Steps (Phase 7: Table & Advanced Tracking)
+1. Table Surface Detection & Calibration
+   - [ ] Plane refinement for table surface (height, normal, extents)
+   - [ ] Confidence scoring for table reliability
+   - [ ] Table anchor & visualization overlay
+2. Persistent Tracking & Identity Stability
+   - [ ] Strengthen track IDs across occlusions
+   - [ ] Track lifecycle analytics (active/occluded/lost/reacquired)
+   - [ ] Merge duplicate tracks heuristic
+3. Shot Intent & Trajectory Prediction
+   - [ ] Cue ball special classification & velocity vector extraction
+   - [ ] Short-term trajectory extrapolation (Kalman velocity forecast)
+   - [ ] Collision candidate estimation (nearest neighbor along path)
+4. Confidence Trend & Analytics
+   - [ ] Rolling confidence sparkline per ball
+   - [ ] Scene complexity → adaptive confidence threshold tuning
+   - [ ] Hysteresis filtering to prevent flicker around threshold
+5. Session Logging & Export
+   - [ ] Structured log (JSONL) with timestamps, detections, confidences
+   - [ ] Export button in HUD for recent session
+   - [ ] Lightweight log pruning & size cap
+
+### Deferred / Future Considerations
+- Cue alignment guidance vectors
+- Reinforcement learning dataset export
+- On-device model fine-tuning pipeline placeholder
 
 ### Key Dependencies
 - iOS 17+, Swift 5.9+
@@ -134,4 +149,4 @@
 
 ---
 
-*Last Updated: November 16, 2025 - Step 7 AR Coordinate System Integration Complete*
+*Last Updated: November 19, 2025 - Phase 6 Visualization & Telemetry Complete*
