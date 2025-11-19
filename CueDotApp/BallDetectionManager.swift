@@ -275,7 +275,7 @@ class BallDetectionManager: NSObject, ObservableObject {
         // Update integrator table info if available
         ballDetectionIntegrator?.updateTableInfo(center: center, height: tableHeight, normal: SIMD3<Float>(0,1,0), confidence: confidence)
         if tablePlaneEntity == nil {
-            let mesh = MeshResource.generatePlane(width: CGFloat(extent.x), depth: CGFloat(extent.z))
+            let mesh = MeshResource.generatePlane(width: extent.x, depth: extent.z)
             var material = SimpleMaterial(color: UIColor.systemTeal.withAlphaComponent(0.15), isMetallic: false)
             tablePlaneEntity = ModelEntity(mesh: mesh, materials: [material])
             tablePlaneEntity?.position = center
@@ -286,7 +286,7 @@ class BallDetectionManager: NSObject, ObservableObject {
             tableAnchorEntity?.addChild(tablePlaneEntity!)
         } else {
             // Resize plane by replacing mesh
-            let mesh = MeshResource.generatePlane(width: CGFloat(extent.x), depth: CGFloat(extent.z))
+            let mesh = MeshResource.generatePlane(width: extent.x, depth: extent.z)
             tablePlaneEntity?.model?.mesh = mesh
             tablePlaneEntity?.position = center
         }
@@ -295,7 +295,7 @@ class BallDetectionManager: NSObject, ObservableObject {
     private func makeBoundingQuad(for detection: AR3DBallDetection) -> ModelEntity? {
         // Simple square facing camera sized relative to ball diameter
         let size: Float = max(0.05, detection.diameter)
-        let mesh = MeshResource.generatePlane(width: CGFloat(size), depth: CGFloat(size))
+        let mesh = MeshResource.generatePlane(width: size, depth: size)
         var material = SimpleMaterial(color: UIColor.white.withAlphaComponent(0.15), isMetallic: false)
         let quad = ModelEntity(mesh: mesh, materials: [material])
         quad.name = "bbox"
