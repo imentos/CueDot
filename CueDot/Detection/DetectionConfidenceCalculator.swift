@@ -5,6 +5,7 @@ import simd
 
 /// Calculates comprehensive confidence scores for ball detections
 /// Combines multiple factors including geometric, temporal, and contextual analysis
+@available(iOS 14.0, macOS 11.0, *)
 public class DetectionConfidenceCalculator {
     
     // MARK: - Configuration
@@ -453,6 +454,7 @@ public struct ConfidenceFactors {
     public let motionRealistic: Float
 }
 
+@available(iOS 14.0, macOS 11.0, *)
 private struct DetectionHistoryEntry {
     let detection: EnhancedVisionBallDetector.CandidateDetection
     var finalConfidence: Float

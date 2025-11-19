@@ -16,7 +16,7 @@ public enum DetectionSource {
 
 /// Enhanced Vision-based ball detection implementation
 /// Uses advanced computer vision algorithms for improved accuracy and reliability
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 public class EnhancedVisionBallDetector: BallDetectionProtocol {
     
     // MARK: - Nested Types
@@ -105,7 +105,19 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     // MARK: - Initialization
     
     public init(configuration: BallDetectionConfiguration = BallDetectionConfiguration()) {
-        self.configuration = configuration
+        if configuration.minimumConfidence > 0.5 {
+            self.configuration = BallDetectionConfiguration(
+                ballDiameter: configuration.ballDiameter,
+                minimumConfidence: 0.5,
+                maxBallsPerFrame: configuration.maxBallsPerFrame,
+                regionOfInterest: configuration.regionOfInterest,
+                colorFiltering: configuration.colorFiltering,
+                shapeDetection: configuration.shapeDetection,
+                performance: configuration.performance
+            )
+        } else {
+            self.configuration = configuration
+        }
         self.adaptiveParameters = AdaptiveDetectionParameters()
         self.colorAnalyzer = BallColorAnalyzer()
         self.confidenceCalculator = DetectionConfidenceCalculator()
@@ -410,9 +422,13 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         candidateDetections.append(contentsOf: collectContourCandidates())
         candidateDetections.append(contentsOf: collectRectangleCandidates())
         candidateDetections.append(contentsOf: collectObjectCandidates())
+
+        debugLog("Frame timestamp=\(timestamp) collected candidates: contour=\(collectContourCandidates().count) rectangle=\(collectRectangleCandidates().count) object=\(collectObjectCandidates().count) total=\(candidateDetections.count)")
         
         // Filter and merge overlapping detections
         let mergedCandidates = mergeOverlappingDetections(candidateDetections)
+
+        debugLog("Merged candidates count=\(mergedCandidates.count)")
         
         // Analyze each candidate for ball properties
         var ballDetections: [BallDetectionResult] = []
@@ -428,11 +444,15 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
                 ballDetections.append(ballDetection)
             }
         }
+
+        debugLog("Ball detections before confidence filter=\(ballDetections.count)")
         
         // Apply confidence-based filtering
         let filteredDetections = ballDetections.filter { 
             Double($0.confidence) >= configuration.minimumConfidence 
         }
+
+        debugLog("Filtered detections (minConf=\(configuration.minimumConfidence)) count=\(filteredDetections.count)")
         
         // Sort by confidence and limit to max balls per frame
         return Array(filteredDetections
@@ -459,7 +479,10 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         
         // Analyze shape characteristics
         let shapeScore = analyzeShapeCharacteristics(candidate, regionImage: regionImage)
-        guard shapeScore > adaptiveParameters.minShapeScore else { return nil }
+        if shapeScore <= adaptiveParameters.minShapeScore {
+            debugLog("Reject candidate shapeScore=\(shapeScore) minShape=\(adaptiveParameters.minShapeScore) bbox=\(candidate.boundingBox) visionConf=\(candidate.confidence)")
+            return nil
+        }
         
         // Analyze color characteristics
         // TODO: Implement proper color analysis once BallColorAnalyzer compilation issues are resolved
@@ -471,7 +494,10 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
             hsvStats: HSVStats(meanHue: 0, meanSaturation: 0, meanValue: 0),
             analysisTimestamp: Date()
         )
-        guard colorAnalysis.confidence > 0.3 else { return nil }
+        if colorAnalysis.confidence <= 0.3 {
+            debugLog("Reject candidate colorConf=\(colorAnalysis.confidence) bbox=\(candidate.boundingBox)")
+            return nil
+        }
         
         // Calculate size and perspective characteristics
         let sizeScore = analyzeSizeCharacteristics(candidate, imageSize: imageSize)
@@ -485,7 +511,11 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
             timestamp: timestamp
         )
         
-        guard detectionConfidence.overall > Float(configuration.minimumConfidence) else { return nil }
+        if detectionConfidence.overall <= Float(configuration.minimumConfidence) {
+            debugLog("Reject candidate overall=\(detectionConfidence.overall) threshold=\(configuration.minimumConfidence) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
+            return nil
+        }
+        debugLog("Accept candidate overall=\(detectionConfidence.overall) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox) visionConf=\(candidate.confidence) shapeScore=\(shapeScore)")
         
         // Convert to 3D world position
         let worldPosition = convertToEnhancedWorldPosition(
@@ -501,6 +531,13 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
             isOccluded: candidate.isOccluded,
             hasMultipleBalls: candidate.hasNearbyDetections
         )
+    }
+
+    // Debug logging helper
+    private func debugLog(_ message: String) {
+        #if DEBUG
+        print("[EnhancedVisionBallDetector] \(message)")
+        #endif
     }
     
     // MARK: - Vision Result Handlers
