@@ -20,6 +20,9 @@ class BallDetectionManager: NSObject, ObservableObject {
     private var isProcessingFrame = false
     private var ballEntities: [String: ModelEntity] = [:]
     private var overlayAnchor: AnchorEntity = AnchorEntity(world: .zero)
+    private var tableAnchorEntity: AnchorEntity? = nil
+    private var tablePlaneEntity: ModelEntity? = nil
+    private var showBoundingQuads: Bool = false // toggle for debug 2D bbox quads
     
     struct DetectedBall: Identifiable {
         let id = UUID()
@@ -216,7 +219,19 @@ class BallDetectionManager: NSObject, ObservableObject {
                 ballEntities[detection.id] = entity
                 overlayAnchor.addChild(entity)
             }
-            entity.position = detection.worldPosition
+            var pos = detection.worldPosition
+            // Clamp ball height to table if tablePlaneEntity exists
+            if let plane = tablePlaneEntity {
+                let tableY = plane.position.y
+                // place sphere center at table height + radius
+                if let sphereChild = entity.children.first {
+                    let radius = sphereChild.scale.x == 0 ? 0.05715/2.0 : (sphereChild.visualBounds(relativeTo: sphereChild).extents.x/2)
+                    pos.y = tableY + radius
+                } else {
+                    pos.y = tableY + 0.05715/2.0
+                }
+            }
+            entity.position = pos
             // Slight lift above table surface if y ~ 0 to avoid z-fighting
             if entity.position.y < 0.01 { entity.position.y += 0.01 }
             // Update existing label color if present
@@ -225,6 +240,12 @@ class BallDetectionManager: NSObject, ObservableObject {
                 if var simple = label.model?.materials.first as? SimpleMaterial {
                     simple.color = .init(tint: newColor, texture: nil)
                     label.model?.materials = [simple]
+                    // Add optional debug quad for 2D bbox projection
+                    if showBoundingQuads, entity.children.first(where: { $0.name == "bbox" }) == nil {
+                        if let quad = makeBoundingQuad(for: detection) {
+                            entity.addChild(quad)
+                        }
+                    }
                 }
             }
         }
@@ -237,6 +258,50 @@ class BallDetectionManager: NSObject, ObservableObject {
         for (_, entity) in ballEntities { entity.removeFromParent() }
         ballEntities.removeAll()
         overlayCount = 0
+    }
+
+    // MARK: - Table Plane Handling
+    private func updateTablePlane(with anchor: ARPlaneAnchor, in arView: ARView) {
+        // We consider the first sufficiently large horizontal plane as table candidate
+        guard anchor.alignment == .horizontal else { return }
+        let extent = anchor.extent
+        let minArea: Float = 0.5 // m^2 threshold for table candidate
+        let area = extent.x * extent.z
+        guard area >= minArea else { return }
+        // Create or update plane entity
+        let center = SIMD3<Float>(anchor.center.x, anchor.center.y, anchor.center.z)
+        let tableHeight = center.y
+        let confidence: Float = min(1.0, area / 2.5) // simple scaling up to area 2.5 m^2
+        // Update integrator table info if available
+        ballDetectionIntegrator?.updateTableInfo(center: center, height: tableHeight, normal: SIMD3<Float>(0,1,0), confidence: confidence)
+        if tablePlaneEntity == nil {
+            let mesh = MeshResource.generatePlane(width: CGFloat(extent.x), depth: CGFloat(extent.z))
+            var material = SimpleMaterial(color: UIColor.systemTeal.withAlphaComponent(0.15), isMetallic: false)
+            tablePlaneEntity = ModelEntity(mesh: mesh, materials: [material])
+            tablePlaneEntity?.position = center
+            if tableAnchorEntity == nil {
+                tableAnchorEntity = AnchorEntity(world: center)
+                arView.scene.addAnchor(tableAnchorEntity!)
+            }
+            tableAnchorEntity?.addChild(tablePlaneEntity!)
+        } else {
+            // Resize plane by replacing mesh
+            let mesh = MeshResource.generatePlane(width: CGFloat(extent.x), depth: CGFloat(extent.z))
+            tablePlaneEntity?.model?.mesh = mesh
+            tablePlaneEntity?.position = center
+        }
+    }
+
+    private func makeBoundingQuad(for detection: AR3DBallDetection) -> ModelEntity? {
+        // Simple square facing camera sized relative to ball diameter
+        let size: Float = max(0.05, detection.diameter)
+        let mesh = MeshResource.generatePlane(width: CGFloat(size), depth: CGFloat(size))
+        var material = SimpleMaterial(color: UIColor.white.withAlphaComponent(0.15), isMetallic: false)
+        let quad = ModelEntity(mesh: mesh, materials: [material])
+        quad.name = "bbox"
+        quad.position = [0, size * 0.6, 0] // float above ball center
+        // Face camera each frame via billboard constraint (manual on update could be added later)
+        return quad
     }
 
     // MARK: - Color & Label Helpers
@@ -315,6 +380,20 @@ extension BallDetectionManager: ARSessionDelegate {
             integrator.detectBallsIn3D(frame: frameCopy) { result in
                 self?.processBallDetectionResult(result)
                 self?.isProcessingFrame = false
+            }
+
+            func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+                guard let arView = arView else { return }
+                for anchor in anchors {
+                    if let plane = anchor as? ARPlaneAnchor { updateTablePlane(with: plane, in: arView) }
+                }
+            }
+
+            func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+                guard let arView = arView else { return }
+                for anchor in anchors {
+                    if let plane = anchor as? ARPlaneAnchor { updateTablePlane(with: plane, in: arView) }
+                }
             }
         }
     }
