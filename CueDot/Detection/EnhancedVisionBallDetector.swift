@@ -105,10 +105,10 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     // MARK: - Initialization
     
     public init(configuration: BallDetectionConfiguration = BallDetectionConfiguration()) {
-        if configuration.minimumConfidence > 0.5 {
+        if configuration.minimumConfidence > 0.4 {
             self.configuration = BallDetectionConfiguration(
                 ballDiameter: configuration.ballDiameter,
-                minimumConfidence: 0.5,
+                minimumConfidence: 0.4,
                 maxBallsPerFrame: configuration.maxBallsPerFrame,
                 regionOfInterest: configuration.regionOfInterest,
                 colorFiltering: configuration.colorFiltering,
@@ -446,6 +446,26 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         }
 
         debugLog("Ball detections before confidence filter=\(ballDetections.count)")
+
+        // Provisional fallback: if we had candidates but none passed thresholds, emit first candidate as provisional
+        if ballDetections.isEmpty && !mergedCandidates.isEmpty {
+            let first = mergedCandidates[0]
+            let provisionalConfidence = Float(min(0.45, configuration.minimumConfidence - 0.05))
+            let worldPosition = convertToEnhancedWorldPosition(
+                candidate: first,
+                imageSize: imageSize,
+                cameraTransform: cameraTransform
+            )
+            let provisional = BallDetectionResult(
+                ballCenter3D: worldPosition,
+                confidence: provisionalConfidence,
+                timestamp: timestamp,
+                isOccluded: first.isOccluded,
+                hasMultipleBalls: first.hasNearbyDetections
+            )
+            ballDetections.append(provisional)
+            debugLog("Added provisional detection bbox=\(first.boundingBox) provisionalConfidence=\(provisionalConfidence)")
+        }
         
         // Apply confidence-based filtering
         let filteredDetections = ballDetections.filter { 
@@ -499,8 +519,8 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
             return nil
         }
         
-        // Calculate size and perspective characteristics
-        let sizeScore = analyzeSizeCharacteristics(candidate, imageSize: imageSize)
+    // Calculate size and perspective characteristics (currently used within confidence calculator only)
+    _ = analyzeSizeCharacteristics(candidate, imageSize: imageSize)
         
         // Calculate overall confidence
         let detectionConfidence = confidenceCalculator.calculateConfidence(
@@ -512,8 +532,15 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         )
         
         if detectionConfidence.overall <= Float(configuration.minimumConfidence) {
-            debugLog("Reject candidate overall=\(detectionConfidence.overall) threshold=\(configuration.minimumConfidence) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
-            return nil
+            // Warm-up heuristic: accept if geometric + color + context are strong and temporal/motion are weak early.
+            let strongComponents = (detectionConfidence.geometric > 0.7 && detectionConfidence.color > 0.7 && detectionConfidence.context > 0.6)
+            let earlyFrame = detectionHistoryCount() < 10 // few historical detections so temporal low is expected
+            if strongComponents && earlyFrame {
+                debugLog("Heuristic ACCEPT overall=\(detectionConfidence.overall) (< threshold=\(configuration.minimumConfidence)) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
+            } else {
+                debugLog("Reject candidate overall=\(detectionConfidence.overall) threshold=\(configuration.minimumConfidence) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
+                return nil
+            }
         }
         debugLog("Accept candidate overall=\(detectionConfidence.overall) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox) visionConf=\(candidate.confidence) shapeScore=\(shapeScore)")
         
@@ -538,6 +565,10 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         #if DEBUG
         print("[EnhancedVisionBallDetector] \(message)")
         #endif
+    }
+
+    private func detectionHistoryCount() -> Int {
+        return lastDetections.count // proxy for early frames; adapt later to real history if exposed
     }
     
     // MARK: - Vision Result Handlers
@@ -616,7 +647,7 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     }
     
     // Legacy method kept for compatibility - no longer used with rectangle detection
-    @available(macOS 10.14, *)
+    // Legacy method kept for macOS compatibility; matches class availability
     private func handleObjectDetectionResults(request: VNRequest, error: Error?) {
         guard error == nil,
               let results = request.results as? [VNRecognizedObjectObservation] else {
@@ -670,7 +701,6 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     }
     
     // Legacy method for compatibility - not used on iOS
-    @available(macOS 10.14, *)
     private func isBallLikeObject(_ object: VNRecognizedObjectObservation) -> Bool {
         for label in object.labels {
             let identifier = label.identifier.lowercased()
@@ -718,10 +748,6 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         }
     }
     
-    private func getTemporalScore(for candidate: CandidateDetection, timestamp: TimeInterval) -> Float {
-        // Analyze detection consistency over time
-        return detectionHistory.getTemporalScore(for: candidate, timestamp: timestamp)
-    }
     
     private func convertToEnhancedWorldPosition(
         candidate: CandidateDetection,
@@ -935,25 +961,6 @@ public class DetectionHistory {
         }
     }
     
-    func getTemporalScore(for candidate: EnhancedVisionBallDetector.CandidateDetection, timestamp: TimeInterval) -> Float {
-        let recentHistory = history.filter { timestamp - $0.timestamp <= 0.5 }
-        
-        if recentHistory.isEmpty {
-            return 0.5 // Neutral score for new detections
-        }
-        
-        // Find closest historical detection
-        var closestDistance: Float = Float.greatestFiniteMagnitude
-        for historyItem in recentHistory {
-            let distance = calculateDistance(candidate.boundingBox, historyItem.detection.boundingBox)
-            if distance < closestDistance {
-                closestDistance = distance
-            }
-        }
-        
-        // Convert distance to score (closer = higher score)
-        return max(0.0, 1.0 - closestDistance / 0.2)
-    }
     
     func stabilizePosition(for detection: BallDetectionResult, timestamp: TimeInterval) -> simd_float3? {
         let recentHistory = history.filter { timestamp - $0.timestamp <= 0.2 }
