@@ -8,7 +8,7 @@ import ARKit
 
 /// Integrates enhanced ball detection with AR coordinate system
 /// Provides 3D positioning of detected balls in world space coordinates
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 public class ARBallDetectionIntegrator {
     
     // MARK: - Core Components
@@ -616,6 +616,16 @@ public class ARBallDetectionIntegrator {
     }
     
     // MARK: - Public Interface
+    
+    /// Start the ball detection system
+    public func startDetection() throws {
+        try enhancedDetector.startDetection()
+    }
+    
+    /// Stop the ball detection system
+    public func stopDetection() {
+        enhancedDetector.stopDetection()
+    }
     
     /// Reset all tracking and detection state
     public func reset() {

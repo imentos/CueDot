@@ -4,6 +4,7 @@ import simd
 
 /// Manages temporal filtering and tracking of ball detections across frames
 /// Implements smoothing, prediction, and consistency validation for robust detection
+@available(iOS 14.0, macOS 11.0, *)
 public class TemporalFilterManager {
     
     // MARK: - Configuration
@@ -402,6 +403,7 @@ public class TemporalFilterManager {
 
 // MARK: - Ball Track Class
 
+@available(iOS 14.0, macOS 11.0, *)
 private class BallTrack {
     let id: Int
     let creationTime: TimeInterval

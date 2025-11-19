@@ -44,12 +44,17 @@ class BallDetectionManager: NSObject, ObservableObject {
     
     private func setupBallDetection() {
         // Initialize the ball detection integrator
-        // Detection happens automatically when AR frames are received
         ballDetectionIntegrator = ARBallDetectionIntegrator()
         
-        // Note: ARBallDetectionIntegrator processes frames via detectBallsIn3D(frame:completion:)
-        // This should be called in the ARSessionDelegate's didUpdate frame method
-        isTracking = true
+        // Start the underlying detection system
+        do {
+            try ballDetectionIntegrator?.startDetection()
+            isTracking = true
+            print("✅ Ball detection started successfully")
+        } catch {
+            print("❌ Failed to start ball detection: \(error)")
+            isTracking = false
+        }
     }
     
     func startSession() {
@@ -64,18 +69,26 @@ class BallDetectionManager: NSObject, ObservableObject {
         }
         
         arView.session.run(configuration)
-        isTracking = true
         
         // Clear any previous detections
         detectedBalls.removeAll()
         
-        // Ball detection continues automatically when AR frames are processed
-        isTracking = ballDetectionIntegrator != nil
+        // Start ball detection
+        do {
+            try ballDetectionIntegrator?.startDetection()
+            isTracking = true
+            print("✅ Ball detection session started")
+        } catch {
+            print("❌ Failed to start detection session: \(error)")
+            isTracking = false
+        }
     }
     
     func stopSession() {
+        ballDetectionIntegrator?.stopDetection()
         arView?.session.pause()
         isTracking = false
+        print("⏸️ Ball detection session stopped")
     }
     
     func resetSession() {
@@ -86,12 +99,19 @@ class BallDetectionManager: NSObject, ObservableObject {
         configuration.planeDetection = [.horizontal]
         arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
-        // Reset detection
+        // Reset detection state
         ballDetectionIntegrator?.reset()
         detectedBalls.removeAll()
         
-        // Ball detection will resume automatically when AR frames are processed
-        isTracking = ballDetectionIntegrator != nil
+        // Restart ball detection
+        do {
+            try ballDetectionIntegrator?.startDetection()
+            isTracking = true
+            print("🔄 Ball detection session reset and restarted")
+        } catch {
+            print("❌ Failed to restart detection after reset: \(error)")
+            isTracking = false
+        }
     }
     
     func startCalibration() {

@@ -101,13 +101,9 @@ public class VisionBallDetector: BallDetectionProtocol {
     public func startDetection() throws {
         guard !isActive else { return }
         
-        do {
-            setupDetection()
-            isActive = true
-            performanceMetrics["sessionsStarted"] = (performanceMetrics["sessionsStarted"] ?? 0) + 1
-        } catch {
-            throw BallDetectionError.initializationFailed("Failed to start detection: \(error.localizedDescription)")
-        }
+        setupDetection()
+        isActive = true
+        performanceMetrics["sessionsStarted"] = (performanceMetrics["sessionsStarted"] ?? 0) + 1
     }
     
     public func stopDetection() {
