@@ -9,6 +9,7 @@ class BallDetectionManager: NSObject, ObservableObject {
     @Published var detectedBalls: [DetectedBall] = []
     @Published var isTracking: Bool = false
     @Published var isGuidanceEnabled: Bool = false
+    @Published var showCueCrosshair: Bool = true
     @Published var minimumOverlayConfidence: Float = 0.3
     @Published var averageProcessingTimeMs: Double = 0.0
     @Published var lastFrameProcessingTimeMs: Double = 0.0
@@ -246,6 +247,14 @@ class BallDetectionManager: NSObject, ObservableObject {
                             entity.addChild(quad)
                         }
                     }
+                    // Add cue ball crosshair if enabled and this is cue ball
+                    if showCueCrosshair, isCueBall(detection), entity.children.first(where: { $0.name == "cueCrosshair" }) == nil {
+                        if let cross = makeCueCrosshair(for: detection) {
+                            entity.addChild(cross)
+                        }
+                    } else if !showCueCrosshair, let crossExisting = entity.children.first(where: { $0.name == "cueCrosshair" }) {
+                        crossExisting.removeFromParent()
+                    }
                 }
             }
         }
@@ -302,6 +311,42 @@ class BallDetectionManager: NSObject, ObservableObject {
         quad.position = [0, size * 0.6, 0] // float above ball center
         // Face camera each frame via billboard constraint (manual on update could be added later)
         return quad
+    }
+
+    private func isCueBall(_ detection: AR3DBallDetection) -> Bool {
+        if let number = detection.ballNumber { return number == 0 }
+        // Fallback heuristic: if colorResult dominantColor missing and sphere material was white, treat as cue ball (simple)
+        return detection.colorResult?.dominantColor == nil
+    }
+
+    private func makeCueCrosshair(for detection: AR3DBallDetection) -> ModelEntity? {
+        // Use ball diameter or default size to scale crosshair
+        let radius: Float = detection.diameter > 0 ? detection.diameter / 2.0 : 0.05715/2.0
+        let lineLength = radius * 1.6
+        let lineThickness: Float = radius * 0.12
+        // Create two planes (or thin boxes) perpendicular for crosshair
+        let horizontal = MeshResource.generatePlane(width: lineLength, depth: lineThickness)
+        let vertical = MeshResource.generatePlane(width: lineThickness, depth: lineLength)
+        let color = crosshairColor(for: detection.confidence)
+        let material = SimpleMaterial(color: color.withAlphaComponent(0.85), isMetallic: false)
+        let hEntity = ModelEntity(mesh: horizontal, materials: [material])
+        let vEntity = ModelEntity(mesh: vertical, materials: [material])
+        // Position slight above sphere to avoid z-fighting
+        hEntity.position = [0, radius * 1.02, 0]
+        vEntity.position = [0, radius * 1.02, 0]
+        let container = ModelEntity()
+        container.name = "cueCrosshair"
+        container.addChild(hEntity)
+        container.addChild(vEntity)
+        return container
+    }
+
+    private func crosshairColor(for confidence: Float) -> UIColor {
+        switch confidence {
+        case ..<0.4: return .systemRed
+        case 0.4..<0.7: return .systemYellow
+        default: return .systemGreen
+        }
     }
 
     // MARK: - Color & Label Helpers

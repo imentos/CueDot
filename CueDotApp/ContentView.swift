@@ -105,6 +105,16 @@ struct ContentView: View {
                             .background(ballDetectionManager.isGuidanceEnabled ? Color.green : Color.gray)
                             .cornerRadius(25)
                     }
+
+                    Button(action: {
+                        ballDetectionManager.showCueCrosshair.toggle()
+                    }) {
+                        Image(systemName: ballDetectionManager.showCueCrosshair ? "plus.circle" : "plus.circle.fill")
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(ballDetectionManager.showCueCrosshair ? Color.blue : Color.gray)
+                            .cornerRadius(25)
+                    }
                 }
                 .padding(.bottom, 50)
 
