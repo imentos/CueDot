@@ -13,9 +13,13 @@ class BallDetectionManager: NSObject, ObservableObject {
     private var arView: ARView?
     private var ballDetectionIntegrator: ARBallDetectionIntegrator?
     private var frameProcessingQueue = DispatchQueue(label: "com.cuedot.frameProcessing", qos: .userInitiated)
+    private var isProcessingFrame = false
+    private var ballEntities: [String: ModelEntity] = [:]
+    private var overlayAnchor: AnchorEntity = AnchorEntity(world: .zero)
     
     struct DetectedBall: Identifiable {
         let id = UUID()
+        let detectionId: String
         let position: SIMD3<Float>
         let color: String
         let confidence: Float
@@ -23,6 +27,9 @@ class BallDetectionManager: NSObject, ObservableObject {
     
     func setupAR(with arView: ARView) {
         self.arView = arView
+
+        // Prepare a single anchor for ball overlays
+        arView.scene.addAnchor(overlayAnchor)
         
         // Set this manager as the AR session delegate
         arView.session.delegate = self
@@ -132,6 +139,7 @@ class BallDetectionManager: NSObject, ObservableObject {
         // Convert AR3DBallDetection to our DetectedBall model
         let balls = result.detections3D.map { detection in
             DetectedBall(
+                detectionId: detection.id,
                 position: detection.worldPosition,
                 color: ballColorToString(detection.colorResult),
                 confidence: detection.confidence
@@ -141,12 +149,54 @@ class BallDetectionManager: NSObject, ObservableObject {
         // Update on main thread
         DispatchQueue.main.async {
             self.detectedBalls = balls
+            if self.isGuidanceEnabled { // reuse guidance toggle to show/hide overlays
+                self.updateBallOverlays(with: result.detections3D)
+            } else {
+                self.clearBallOverlays()
+            }
         }
     }
     
     private func ballColorToString(_ colorResult: BallColorResult?) -> String {
         guard let colorResult = colorResult else {
             return "Unknown"
+        }
+
+        // MARK: - Overlay Management
+        private func updateBallOverlays(with detections: [AR3DBallDetection]) {
+            guard let arView else { return }
+            let currentIds = Set(detections.map { $0.id })
+            // Remove entities no longer present
+            for (id, entity) in ballEntities where !currentIds.contains(id) {
+                entity.removeFromParent()
+                ballEntities.removeValue(forKey: id)
+            }
+            // Update or create entities
+            for detection in detections {
+                let entity: ModelEntity
+                if let existing = ballEntities[detection.id] {
+                    entity = existing
+                } else {
+                    // Sphere sized to standard ball diameter if available
+                    let radius: Float = detection.diameter > 0 ? detection.diameter / 2.0 : 0.05715/2.0
+                    let mesh = MeshResource.generateSphere(radius: radius)
+                    let materialColor: UIColor = detection.colorResult?.dominantColor != nil ? .systemYellow : .white
+                    let material = SimpleMaterial(color: materialColor.withAlphaComponent(0.85), isMetallic: false)
+                    entity = ModelEntity(mesh: mesh, materials: [material])
+                    ballEntities[detection.id] = entity
+                    overlayAnchor.addChild(entity)
+                }
+                entity.position = detection.worldPosition
+                // Slight lift above table surface if y ~ 0 to avoid z-fighting
+                if entity.position.y < 0.01 { entity.position.y += 0.01 }
+            }
+            // Optional: scale anchor to identity (ensure not transformed elsewhere)
+            overlayAnchor.transform = .identity
+        }
+
+        private func clearBallOverlays() {
+            for (_, entity) in ballEntities { entity.removeFromParent() }
+            ballEntities.removeAll()
         }
         
         // Since internal properties are not accessible, we use a simplified approach
@@ -166,10 +216,15 @@ extension BallDetectionManager: ARSessionDelegate {
         // Only process if tracking is enabled and integrator exists
         guard isTracking, let integrator = ballDetectionIntegrator else { return }
         
-        // Process frame on background queue to avoid blocking the AR session
+        // Throttle: skip if previous frame still processing
+        if isProcessingFrame { return }
+        isProcessingFrame = true
+        
+        let frameCopy = frame // Pass directly; integrator now decouples internally
         frameProcessingQueue.async { [weak self] in
-            integrator.detectBallsIn3D(frame: frame) { result in
+            integrator.detectBallsIn3D(frame: frameCopy) { result in
                 self?.processBallDetectionResult(result)
+                self?.isProcessingFrame = false
             }
         }
     }

@@ -80,6 +80,7 @@ public class DetectionConfidenceCalculator {
         updateDetectionHistory(detection, finalScore: environmentallyAdjustedScore, timestamp: timestamp)
         
         return DetectionConfidence(
+            rawCombined: overallScore,
             overall: environmentallyAdjustedScore,
             geometric: geometricScore,
             temporal: temporalScore,
@@ -427,6 +428,7 @@ public class DetectionConfidenceCalculator {
 // MARK: - Supporting Types
 
 public struct DetectionConfidence {
+    public let rawCombined: Float // Pre-environmental adjustment composite score
     public let overall: Float
     public let geometric: Float
     public let temporal: Float
@@ -463,6 +465,7 @@ private struct DetectionHistoryEntry {
 
 // MARK: - Scene Context Analyzer
 
+@available(iOS 14.0, macOS 11.0, *)
 private class SceneContextAnalyzer {
     func analyzeDetectionContext(
         _ detection: EnhancedVisionBallDetector.CandidateDetection,
@@ -480,6 +483,7 @@ private class SceneContextAnalyzer {
 
 // MARK: - Ball Motion Analyzer
 
+@available(iOS 14.0, macOS 11.0, *)
 private class BallMotionAnalyzer {
     private var velocityHistory: [simd_float2] = []
     

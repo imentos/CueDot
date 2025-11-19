@@ -262,23 +262,20 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
     }
     
     public func detectBallsAsync(in pixelBuffer: CVPixelBuffer,
-                                cameraTransform: simd_float4x4,
-                                timestamp: TimeInterval,
-                                completion: @escaping (Result<[BallDetectionResult], BallDetectionError>) -> Void) {
+                                 cameraTransform: simd_float4x4,
+                                 timestamp: TimeInterval,
+                                 completion: @escaping (Result<[BallDetectionResult], BallDetectionError>) -> Void) {
+        // Copy reference values needed for async call (avoid capturing non-Sendable directly)
+        let localPixelBuffer = pixelBuffer
+        let localTransform = cameraTransform
+        let localTimestamp = timestamp
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
             Task {
-                do {
-                    let results = try await self?.detectBallsAsync(in: pixelBuffer, 
-                                                       cameraTransform: cameraTransform, 
-                                                       timestamp: timestamp) ?? []
-                    DispatchQueue.main.async {
-                        completion(.success(results))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(.failure(error as? BallDetectionError ?? .detectionFailed("Unknown error")))
-                    }
-                }
+                let results = (try? await self.detectBallsAsync(in: localPixelBuffer,
+                                                                cameraTransform: localTransform,
+                                                                timestamp: localTimestamp)) ?? []
+                completion(.success(Array(results)))
             }
         }
     }
@@ -544,13 +541,13 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
             let strongComponents = (detectionConfidence.geometric > 0.7 && detectionConfidence.color > 0.7 && detectionConfidence.context > 0.6)
             let earlyFrame = detectionHistoryCount() < 10 // few historical detections so temporal low is expected
             if strongComponents && earlyFrame {
-                debugLog("Heuristic ACCEPT overall=\(detectionConfidence.overall) (< threshold=\(configuration.minimumConfidence)) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
+                debugLog("Heuristic ACCEPT raw=\(detectionConfidence.rawCombined) adjusted=\(detectionConfidence.overall) (< threshold=\(configuration.minimumConfidence)) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
             } else {
-                debugLog("Reject candidate overall=\(detectionConfidence.overall) threshold=\(configuration.minimumConfidence) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
+                debugLog("Reject candidate raw=\(detectionConfidence.rawCombined) adjusted=\(detectionConfidence.overall) threshold=\(configuration.minimumConfidence) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox)")
                 return nil
             }
         }
-        debugLog("Accept candidate overall=\(detectionConfidence.overall) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox) visionConf=\(candidate.confidence) shapeScore=\(shapeScore)")
+        debugLog("Accept candidate raw=\(detectionConfidence.rawCombined) adjusted=\(detectionConfidence.overall) geom=\(detectionConfidence.geometric) temp=\(detectionConfidence.temporal) color=\(detectionConfidence.color) ctx=\(detectionConfidence.context) motion=\(detectionConfidence.motion) bbox=\(candidate.boundingBox) visionConf=\(candidate.confidence) shapeScore=\(shapeScore)")
         
         // Convert to 3D world position
         let worldPosition = convertToEnhancedWorldPosition(
