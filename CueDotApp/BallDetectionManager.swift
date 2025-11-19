@@ -259,6 +259,7 @@ class BallDetectionManager: NSObject, ObservableObject {
 
     private func ballNumberColor(_ number: Int) -> UIColor? {
         // Basic 1-15 pool ball palette approximation
+        let maroon = UIColor(red: 128/255.0, green: 0/255.0, blue: 32/255.0, alpha: 1.0)
         let mapping: [Int: UIColor] = [
             0: .white, // cue
             1: .systemYellow,
@@ -267,7 +268,7 @@ class BallDetectionManager: NSObject, ObservableObject {
             4: .systemPurple,
             5: .systemOrange,
             6: .systemGreen,
-            7: .systemMaroon,
+            7: maroon,
             8: .black,
             9: .systemYellow,
             10: .systemBlue,
@@ -275,7 +276,7 @@ class BallDetectionManager: NSObject, ObservableObject {
             12: .systemPurple,
             13: .systemOrange,
             14: .systemGreen,
-            15: .systemMaroon
+            15: maroon
         ]
         return mapping[number]
     }
