@@ -468,8 +468,16 @@ public class EnhancedVisionBallDetector: BallDetectionProtocol {
         }
         
         // Apply confidence-based filtering
-        let filteredDetections = ballDetections.filter { 
+        var filteredDetections = ballDetections.filter { 
             Double($0.confidence) >= configuration.minimumConfidence 
+        }
+
+        // Warm-up fallback: if none pass threshold but we have provisional/heuristic detections, keep the highest confidence one for first frames
+        if filteredDetections.isEmpty && !ballDetections.isEmpty && detectionHistoryCount() < 15 {
+            if let top = ballDetections.max(by: { $0.confidence < $1.confidence }) {
+                filteredDetections = [top]
+                debugLog("Warm-up fallback retained detection with confidence=\(top.confidence) (< minConf=\(configuration.minimumConfidence))")
+            }
         }
 
         debugLog("Filtered detections (minConf=\(configuration.minimumConfidence)) count=\(filteredDetections.count)")
