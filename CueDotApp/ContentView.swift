@@ -26,6 +26,13 @@ struct ContentView: View {
                             Text("Not Tracking")
                                 .foregroundColor(.red)
                         }
+                        // Performance metrics
+                        Text(String(format: "Avg ms: %.1f", ballDetectionManager.averageProcessingTimeMs))
+                            .foregroundColor(.white.opacity(0.8))
+                            .font(.caption)
+                        Text(String(format: "Last ms: %.1f", ballDetectionManager.lastFrameProcessingTimeMs))
+                            .foregroundColor(.white.opacity(0.6))
+                            .font(.caption2)
                     }
                     
                     Spacer()
@@ -41,6 +48,9 @@ struct ContentView: View {
                             Text("Guidance: OFF")
                                 .foregroundColor(.gray)
                         }
+                        Text("Overlays: \(ballDetectionManager.overlayCount)")
+                            .foregroundColor(.white.opacity(0.7))
+                            .font(.caption)
                     }
                 }
                 .padding()
@@ -97,6 +107,21 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom, 50)
+
+                // Confidence threshold slider
+                VStack {
+                    Text(String(format: "Overlay Confidence ≥ %.2f", ballDetectionManager.minimumOverlayConfidence))
+                        .foregroundColor(.white)
+                        .font(.caption)
+                    Slider(value: Binding(get: {
+                        Double(ballDetectionManager.minimumOverlayConfidence)
+                    }, set: { newVal in
+                        ballDetectionManager.minimumOverlayConfidence = Float(newVal)
+                    }), in: 0.0...1.0, step: 0.05)
+                        .tint(.green)
+                        .padding(.horizontal)
+                }
+                .padding(.bottom, 20)
             }
         }
     }
