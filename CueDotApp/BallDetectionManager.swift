@@ -377,24 +377,25 @@ extension BallDetectionManager: ARSessionDelegate {
         
         let frameCopy = frame // Pass directly; integrator now decouples internally
         frameProcessingQueue.async { [weak self] in
+            guard let self = self else { return }
             integrator.detectBallsIn3D(frame: frameCopy) { result in
-                self?.processBallDetectionResult(result)
-                self?.isProcessingFrame = false
+                self.processBallDetectionResult(result)
+                self.isProcessingFrame = false
             }
+        }
+    }
 
-            func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-                guard let arView = arView else { return }
-                for anchor in anchors {
-                    if let plane = anchor as? ARPlaneAnchor { updateTablePlane(with: plane, in: arView) }
-                }
-            }
+    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+        guard let arView = self.arView else { return }
+        for anchor in anchors {
+            if let plane = anchor as? ARPlaneAnchor { self.updateTablePlane(with: plane, in: arView) }
+        }
+    }
 
-            func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-                guard let arView = arView else { return }
-                for anchor in anchors {
-                    if let plane = anchor as? ARPlaneAnchor { updateTablePlane(with: plane, in: arView) }
-                }
-            }
+    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+        guard let arView = self.arView else { return }
+        for anchor in anchors {
+            if let plane = anchor as? ARPlaneAnchor { self.updateTablePlane(with: plane, in: arView) }
         }
     }
     
